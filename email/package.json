@@ -1,0 +1,11 @@
+{
+  "name": "ut-email",
+  "version": "0.0.0",
+  "description": "User Toolkit email module",
+  "main": "email.coffee",
+  "scripts": {
+    "test": "jasmine-node --color --coffee email_spec.coffee"
+  },
+  "author": "Duncan Smith",
+  "license": "ISC"
+}

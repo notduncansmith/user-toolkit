@@ -1,0 +1,23 @@
+{
+  "name": "user-toolkit",
+  "version": "0.0.0",
+  "description": "A collection of user tools",
+  "main": "app.coffee",
+  "scripts": {
+    "test": "jasmine-node --coffee --color spec/"
+  },
+  "keywords": [
+    "user",
+    "management"
+  ],
+  "author": "Duncan Smith",
+  "license": "MIT",
+  "dependencies": {
+    "mysql": "~2.1.1",
+    "uuid": "~1.4.1",
+    "node-uuid": "~1.4.1",
+    "omni-di": "~1.0.0",
+    "bluebird": "~1.2.1",
+    "bcrypt": "~0.7.7"
+  }
+}
