@@ -10,42 +10,43 @@ Extendable = require './base/extendable'
 BaseClass = require './base/base'
 RepoClass = require './base/repo'
 
-config = 
-  db: 
-    host: 'localhost'
-    user: 'root'
-    password: '1'
-    connectionLimit: 500
-    database: 'toolkit'
+module.exports = (config) ->
 
-  table: 'user'
+  exampleConfig = 
+    db: 
+      host: 'localhost'
+      user: 'root'
+      password: '1'
+      connectionLimit: 500
+      database: 'toolkit'
+    table: 'user'
 
-pool = mysql.createPool config.db
+  config ?= exampleConfig
 
-# Register dependencies
-di.register 'uuid', uuid
-di.register 'pool', pool
-di.register 'Promise', Promise
-di.register 'config', config
-di.register 'Extendable', Extendable
-di.register 'bcrypt', bcrypt
+  pool = mysql.createPool config.db
 
-# Set up repo
-Repo = di.inject RepoClass
-db = new Repo()
-di.register 'db', db
+  # Register dependencies
+  di.register 'uuid', uuid
+  di.register 'pool', pool
+  di.register 'Promise', Promise
+  di.register 'config', config
+  di.register 'Extendable', Extendable
+  di.register 'bcrypt', bcrypt
 
-
-# Set up modules
-Auth = require './authentication/auth'
-auth = di.inject Auth
+  # Set up repo
+  Repo = di.inject RepoClass
+  db = new Repo()
+  di.register 'db', db
 
 
-modules = [auth]
-di.register 'modules', modules
+  # Set up modules
+  Auth = require './authentication/auth'
+  auth = di.inject Auth
 
 
-# Power up User class
-User = di.inject BaseClass
+  modules = [auth]
+  di.register 'modules', modules
 
-module.exports = User
+
+  # Power up User class
+  User = di.inject BaseClass
