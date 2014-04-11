@@ -12,7 +12,10 @@ mustache =
   render: (template, data) ->
     'Message'
 
-templates = ['Hello, {{name}}!']
+templates = 
+  hello: 
+    subject: 'Ohai'
+    template: 'Message'
 
 mailConfig =
   fromEmail: 'from@bar.com'
@@ -54,3 +57,46 @@ describe 'The Email module', ->
     it 'should call mailer.messages.send', ->
       expect mailer.messages.send
       .toHaveBeenCalledWith jasmine.any(Object), jasmine.any(Function)
+
+  describe 'has a sendWithTemplate method, which', ->
+
+    beforeEach ->
+      spyOn email, 'send'
+      spyOn email, 'renderTemplate'
+      .andCallThrough()
+
+      email.sendWithTemplate user, 'hello', {package: 'pony'}, 'sometag'
+
+    it 'should call send properly', ->
+      expect email.send
+      .toHaveBeenCalledWith user, 'Ohai', 'Message', 'sometag'
+
+    it 'should call renderTemplate properly', ->
+      expect email.renderTemplate
+      .toHaveBeenCalledWith templates.hello.template, {user: user, package: 'pony'}
+
+  describe 'has a renderTemplate method, which', ->
+
+    it 'should return a promise', ->
+      e = email.renderTemplate '', {}
+      expect e
+      .toEqual jasmine.any(Promise)
+
+    it 'should use mustache to render the template', ->
+      spyOn mustache, 'render'
+      .andCallThrough()
+
+      email.renderTemplate 'Template', {data: 'somedata'}
+      
+      expect mustache.render
+      .toHaveBeenCalledWith 'Template', {data: 'somedata'}
+
+    it 'should resolve with a rendered template', ->
+      e = email.renderTemplate 'Template', {data: 'somedata'}
+      expect e.value()
+      .toEqual 'Message'
+
+
+
+
+

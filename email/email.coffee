@@ -1,14 +1,14 @@
-module.exports = (mailer, mailConfig, mustache, Promise, templates)->
+module.exports = (mailer, mailConfig, mustache, Promise, templates) ->
   class Email
     templates: templates
 
     sendWithTemplate: (user, templateName, data, tag) ->
       t = @templates[templateName]
       tag ?= 'misc'
-      
+      data.user = user
       @renderTemplate t.template, data
-      .then (contents) ->
-        @send user.emailAddress, t.subject, contents, tag
+      .then (contents) =>
+        @send user, t.subject, contents, tag
 
     send: (user, subject, contents, tag) ->
       recipient = 
@@ -29,8 +29,8 @@ module.exports = (mailer, mailConfig, mustache, Promise, templates)->
         mailer.messages.send {message:message}, (response) ->
           resolve response
 
-    renderTemplate: (templateName, data) ->
+    renderTemplate: (template, data) ->
       new Promise (resolve, reject) ->
-        contents = mustache.render @templates[templateName], data
+        contents = mustache.render template, data
         resolve contents
 
