@@ -8,7 +8,6 @@ module.exports = (Promise, db, bcrypt) ->
             if err?
               reject err
               return
-
             if authenticated is true
               resolve user
             else
@@ -16,11 +15,17 @@ module.exports = (Promise, db, bcrypt) ->
 
 
   instanceProperties =
-    newPassword: (newPass) ->
+    newPassword: (newPass, andSave) ->
       new Promise (resolve, reject) ->
         bcrypt.hash newPass, 10, (err, hash) ->
           if err?
             reject err
+            return
+          if andSave?
+            @hashedPassword = hash
+            @save()
+            .then -> resolve hash
+            .catch (error) -> reject error
           else
             resolve hash
 
