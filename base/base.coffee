@@ -1,11 +1,19 @@
-module.exports = (Extendable, uuid, db, modules) ->
+module.exports = ( 
+  Extendable
+, uuid
+, userRepo
+, user_roleRepo
+, Auth
+, Persistable
+, Roles
+) ->
 
   # Now User can be extended
   class User extends Extendable
 
-    for m in modules
-      @extend m.classProperties
-      @include m.instanceProperties
+    @extend Auth
+    @extend Persistable
+    @extend Roles
     
     constructor: (user) ->
       props = Object.getOwnPropertyNames user
@@ -16,9 +24,11 @@ module.exports = (Extendable, uuid, db, modules) ->
       if not user.id?
         @id = uuid.v4()
 
-    # Instance Methods
+      @roles = []
+
+    # Instance Properties
     save: ->
-      db.save this
+      userRepo.save this
 
     fullName: ->
       @firstName + ' ' + @lastName
@@ -33,17 +43,3 @@ module.exports = (Extendable, uuid, db, modules) ->
       #{@city}, #{@stateAbbrev()} #{@zip}
       "
       address.trim()
-
-    # Class Methods
-
-    # This takes a single object as an argument, matcher.
-    # Matcher keys specify which columns to match on
-    # The values of those keys specify values to match
-    @where: (matcher) ->
-      db.where(matcher)
-      .then (result) ->
-        new User(result)
-
-    # A convenience method demonstrating the use of @where
-    @find: (id) ->
-      @where({id: id})

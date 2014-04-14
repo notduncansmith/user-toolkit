@@ -34,7 +34,7 @@ All features are modules that follow a few common patterns:
 
 * Authentication
 
-- `4h` Email Notifications w/template support (external module)
+- Email Notifications w/template support (depends on Mandrill API interface)
 
 - `4h` Password Reset
 

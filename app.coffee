@@ -5,10 +5,14 @@ di = require('omni-di')()
 Promise = require 'bluebird'
 bcrypt = require 'bcrypt'
 
-# Classes
+# Classes & Mixins
 Extendable = require './base/extendable'
 BaseClass = require './base/base'
 RepoClass = require './base/repo'
+
+PersistableMixin = require './base/persistable'
+AuthMixin = require './authentication/auth'
+RolesMixin = require './roles/roles'
 
 module.exports = (config) ->
 
@@ -33,20 +37,29 @@ module.exports = (config) ->
   di.register 'Extendable', Extendable
   di.register 'bcrypt', bcrypt
 
-  # Set up repo
+  # Set up repos
   Repo = di.inject RepoClass
-  db = new Repo()
-  di.register 'db', db
+
+  repositories = [
+    'user',
+    'user_role',
+    'role'
+  ]
+
+  for r in repositories
+    newRepo = new Repo config
+    newRepo.table = r
+    di.register "#{r}Repo", newRepo
 
 
-  # Set up modules
-  Auth = require './authentication/auth'
-  auth = di.inject Auth
+  # Set up mixins
+  Persistable = di.inject PersistableMixin
+  di.register 'Persistable', Persistable
 
+  Auth = di.inject AuthMixin
+  di.register 'Auth', Auth
 
-  modules = [auth]
-  di.register 'modules', modules
+  Roles = di.inject RolesMixin
+  di.register 'Roles', Roles
 
-
-  # Power up User class
   User = di.inject BaseClass

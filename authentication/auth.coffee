@@ -1,30 +1,33 @@
-module.exports = (Promise, db, bcrypt) ->
+module.exports = (Promise, userRepo, bcrypt) ->
   classProperties =
     authenticate: (username, password) ->
-      db.where {username: username}
+      userRepo.where {username: username}
       .then (user) ->
         new Promise (resolve, reject) ->
-          bcrypt.compare password, user.hashedPassword, (err, authenticated) ->
+          u = user[0]
+          bcrypt.compare password, u.password, (err, authenticated) ->
             if err?
               reject err
               return
             if authenticated is true
-              resolve user
+              resolve u
             else
               resolve 'Username or password incorrect'
 
 
   instanceProperties =
     newPassword: (newPass, andSave) ->
-      new Promise (resolve, reject) ->
-        bcrypt.hash newPass, 10, (err, hash) ->
+      new Promise (resolve, reject) =>
+        bcrypt.hash newPass, 10, (err, hash) =>
           if err?
             reject err
             return
+          
+          @password = hash
+
           if andSave?
-            @hashedPassword = hash
             @save()
-            .then -> resolve hash
+            .then -> resolve @
             .catch (error) -> reject error
           else
             resolve hash

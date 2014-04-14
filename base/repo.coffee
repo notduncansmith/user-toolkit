@@ -1,25 +1,38 @@
-# Data access layer for users
+# Data access layer
 
 module.exports = (Promise, pool, config) ->
 
   class Repo
-    constructor: ->
-      @table = config.table
+    constructor: (table) ->
+      @table = table or config.table
 
-    save: (user) ->
+    save: (obj) ->
       sql = "
       insert into #{@table} set ? 
       on duplicate key update ?
       "
       
-      @query sql, [user, user]
-      .catch @handleError('Unable to save user')
+      @query sql, [obj, obj]
+      .then -> obj
+      .catch @handleError('Unable to save object')
 
     where: (opt) ->
       sql = "select * from #{@table} where ?"
 
       @query sql, [opt]
-      .catch @handleError('Unable to find user')
+      .catch @handleError('Unable to find object')
+
+    all: ->
+      sql = "select * from #{@table}"
+
+      @query sql
+      .catch @handleError('Unable to find objects')    
+
+    delete: (opt) ->
+      sql = "delete * from #{@table} where ?"
+
+      @query sql, [opt]
+      .catch @handleError('Unable to remove object')
 
 
     query: (sql, values) ->
@@ -30,11 +43,8 @@ module.exports = (Promise, pool, config) ->
             if err?
               reject err
               return
-
-            if results.length is 1
-              resolve results[0]
-            else
-              resolve results
+            
+            resolve results
 
           if error?
             reject error
