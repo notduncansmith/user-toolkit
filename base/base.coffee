@@ -5,7 +5,6 @@ module.exports = (
 , user_roleRepo
 , Auth
 , Persistable
-, Roles
 ) ->
 
   # Now User can be extended
@@ -13,7 +12,6 @@ module.exports = (
 
     @extend Auth
     @extend Persistable
-    @extend Roles
     
     constructor: (user) ->
       props = Object.getOwnPropertyNames user
@@ -23,8 +21,6 @@ module.exports = (
 
       if not user.id?
         @id = uuid.v4()
-
-      @roles = []
 
     # Instance Properties
     save: ->
