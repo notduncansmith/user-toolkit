@@ -20,7 +20,7 @@ module.exports = (config) ->
     db: 
       host: 'localhost'
       user: 'root'
-      password: '1'
+      password: 'kffnnpa'
       connectionLimit: 500
       database: 'toolkit'
     table: 'user'
