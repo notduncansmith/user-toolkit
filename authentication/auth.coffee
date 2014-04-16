@@ -4,6 +4,10 @@ module.exports = (Promise, userRepo, bcrypt) ->
       userRepo.where {username: username}
       .then (results) =>
         new Promise (resolve, reject) =>
+          if results.length < 1
+            reject 'Username or password incorrect'
+            return
+
           u = results[0]
           bcrypt.compare password, u.password, (err, authenticated) =>
             if err?
