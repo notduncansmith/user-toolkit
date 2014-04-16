@@ -7,7 +7,6 @@ module.exports = (Promise, userRepo, bcrypt) ->
           if results.length < 1
             reject 'Username or password incorrect'
             return
-
           u = results[0]
           bcrypt.compare password, u.password, (err, authenticated) =>
             if err?
@@ -17,7 +16,7 @@ module.exports = (Promise, userRepo, bcrypt) ->
               user = new @(u)
               resolve user
             else
-              resolve 'Username or password incorrect'
+              reject 'Username or password incorrect'
 
 
   instanceProperties =
