@@ -26,7 +26,10 @@ module.exports = (userRepo) ->
 
   instanceProperties =
     save: ->
-      userRepo.save this
+      userRepo.save @
+
+    remove: ->
+      userRepo.delete {id: @id}
 
   extendWith = 
     classProperties: classProperties
