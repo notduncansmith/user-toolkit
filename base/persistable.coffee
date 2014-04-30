@@ -1,3 +1,12 @@
+makeUsers = (rows, klass) ->
+  users = []
+      
+  for u in rows
+    user = new klass(u)
+    users.push user
+
+  users
+  
 module.exports = (userRepo) ->
 
   classProperties = 
@@ -33,16 +42,8 @@ module.exports = (userRepo) ->
     remove: ->
       userRepo.delete {id: @id}
 
+
   extendWith = 
     classProperties: classProperties
     instanceProperties: instanceProperties
 
-
-  makeUsers = (rows, klass) ->
-    users = []
-        
-    for u in rows
-      user = new klass(u)
-      users.push user
-
-    users
