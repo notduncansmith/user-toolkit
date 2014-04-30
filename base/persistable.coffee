@@ -6,23 +6,25 @@ module.exports = (userRepo) ->
     # Example: User.where {id: '1234'}
     where: (matcher) ->
       userRepo.where(matcher)
-      .then (results) =>
-        users = []
-        
-        for u in results
-          user = new @(u)
-          users.push user
-
-        users
+      .then (results) => makeUsers(results, @)
 
     # A convenience method demonstrating the use of @where
     find: (id) ->
       @where({id: id})
       .then (results) ->
         user = results[0]
-        user.getRoles()
         .then ->
           user
+
+    all: () ->
+      userRepo.all()
+      .then (results) => makeUsers(results, @)
+        
+
+    query: (sql) ->
+      userRepo.query(sql)
+      .then (results) => makeUsers(results, @)
+
 
   instanceProperties =
     save: ->
@@ -34,3 +36,13 @@ module.exports = (userRepo) ->
   extendWith = 
     classProperties: classProperties
     instanceProperties: instanceProperties
+
+
+  makeUsers = (rows, klass) ->
+    users = []
+        
+    for u in rows
+      user = new klass(u)
+      users.push user
+
+    users
