@@ -31,7 +31,7 @@ module.exports = (Promise, userRepo, bcrypt) ->
 
           if andSave?
             @save()
-            .then -> resolve @
+            .then => resolve @
             .catch (error) -> reject error
           else
             resolve hash
